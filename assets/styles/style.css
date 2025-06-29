@@ -1,0 +1,54 @@
+body {
+    font-family: "FHP Sun", sans-serif;
+    margin: 0;
+}
+
+.info-button {
+    font-family: "FHP Sun", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    cursor: pointer;
+    padding: 10px 20px;
+    font-size: 15px;
+    background-color: rgba(255, 255, 255, 0%) !important;
+    color: black;
+    border: black 1px solid;
+    position: fixed;
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.info-button:hover {
+    font-style: italic;
+    border: none;
+}
+
+.audio-file-name {
+    font-family: "chidori", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    position: fixed;
+    color: black;
+    font-size: 10px;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.progress-bar {
+    background-color: black;
+    height: 100%;
+    transition: width 0.01s;
+}
+
+.progress-bar-container {
+    background-color: #f0f0f0;;
+    height: 2px;
+    position: fixed;
+    top: 95%;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
