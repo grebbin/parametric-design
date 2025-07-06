@@ -1,6 +1,15 @@
 // Variable to store the shape properties
 let shape;
 
+let audioFile = [
+    './assets/music/Noble Demon – Beware the Forest’s Mushrooms Arrangement [Super Mario RPG].mp3',
+    './assets/music/Noble Demon – Realm Overworld Arrangement [The Legend of Zelda – Spirit Tracks].mp3',
+    './assets/music/Zame – Title Screen Arrangement [Pokémon Black and White].mp3',
+]
+
+// Change audio file
+let audioIndex = Math.floor(Math.random() * 3);
+
 // Variable to store amplitude and change the amplitude level effect
 let amp;
 let ampLevelIncrease = 1;
@@ -33,19 +42,28 @@ let infoButton;
 let audioFileName;
 let audioFileNameDiv;
 
+let backgroundImage;
+
 // Preload the audio file to be used for the music segments
 function preload() {
-    audio = loadSound('./assets/music/Noble Demon – Beware the Forest’s Mushrooms Arrangement [Super Mario RPG].mp3', captureAudioFileName);
+    backgroundImage = loadImage('./assets/image/Background.gif');
+    audio = loadSound(audioFile[audioIndex], captureAudioFileName);
 }
 
 function setup() {
     createCanvas(windowWidth, windowHeight);
 
-    // Define the number of polygons to create
-    const numPolygons = 5;
+    // Read out duration of the audio file
+    const totalDuration = audio.duration();
 
-    // Define the scale of the polygons
-    const scalePolygons = 2;
+    // Targeted duration of each segment in seconds
+    const targetedSegmentDuration = 20;
+
+    // Calculate the number of polygons to create baed on the total duration and targeted segment duration
+    const numPolygons = ceil(totalDuration / targetedSegmentDuration);
+
+    // Calculate the scale of the polygons based on the number of polygons
+    const scalePolygons = map(numPolygons, 1, 10, 6, 3);
 
     // Define a common set of vertices to form the shape
     const vertices = [  
@@ -58,7 +76,6 @@ function setup() {
     ];
 
     // Calculate the duration segment for each polygon based on the audio's total length
-    const totalDuration = audio.duration();
     const segmentDuration = totalDuration / numPolygons;
 
     // Create each polygon with randomly assigned position, color, and audio segment
@@ -80,30 +97,11 @@ function setup() {
     amp = new p5.Amplitude();
     amp.setInput(audio);
 
-    // Create progress bar container
-    progressBarMaxWidth = width * 0.5;
-    let progressBarContainer = createDiv('');
-    progressBarContainer.class('progress-bar-container');
-    progressBarContainer.style('width', progressBarMaxWidth + 'px');
-
-    // Create progress bar within the container
-    progressBar = createDiv('');
-    progressBar.parent(progressBarContainer);
-    progressBar.class('progress-bar');
-    progressBar.style('width', '0px');
-
-    // Create a button to toggle composition playback
-    infoButton = createButton('Press Space to play your composition from left to right');
-    infoButton.class('info-button');
-    infoButton.mousePressed(toggleCompositionPlayback);
-
-    // Create a div for displaying current audio file name
-    audioFileNameDiv = createDiv(`${audioFileName}`);
-    audioFileNameDiv.class('audio-file-name');
+    createUIElements();
 }
 
 function draw() {
-    background('white');
+    background(backgroundImage);
 
     const level = amp.getLevel(); // Get the current amplitude level of the audio
 
@@ -171,18 +169,6 @@ function mouseReleased() {
     }
 }
 
-function keyPressed() {
-    if (key === 'Enter') {
-        save('composition.png');
-    }
-    if (key === ' ' && isDragging === false) {
-        toggleCompositionPlayback();
-    }
-    if (key === ' ' && playingShape) {
-        playShapeAudio(playingShape, 2);
-    }
-}
-
 // Function to start or stop individual shape audio playback
 function playShapeAudio(selectedShape, speedFactor = 1) {
     if (audio.isPlaying()) {
@@ -224,7 +210,7 @@ function modifyShapeVertices(shape, amplitudeFactor) {
 
     // Base scale adjustment for smooth oscillation
     const baseScale = 1;
-    const scaleStrength = amplitudeFactor * 0.05;
+    const scaleStrength = 0.09 * amplitudeFactor;
 
     // Dynamic random offset magnitude influenced by amplitude
     const offsetMagnitude = amplitudeFactor * 3;
@@ -302,6 +288,38 @@ function stopCompositionPlayback() {
     shapes.forEach(unstrokeShape);
 }
 
+function strokeShape(shape, color) {
+    shape.strokeCol = color;
+}
+
+function unstrokeShape(shape) {
+    shape.strokeCol = null;
+}
+
+function createUIElements() {
+
+    // Create progress bar container
+    progressBarMaxWidth = width * 0.5;
+    let progressBarContainer = createDiv('');
+    progressBarContainer.class('progress-bar-container');
+    progressBarContainer.style('width', progressBarMaxWidth + 'px');
+
+    // Create progress bar within the container
+    progressBar = createDiv('');
+    progressBar.parent(progressBarContainer);
+    progressBar.class('progress-bar');
+    progressBar.style('width', '0px');
+
+    // Create a button to toggle composition playback
+    infoButton = createButton('Press Space to play your composition from left to right');
+    infoButton.class('info-button');
+    infoButton.mousePressed(toggleCompositionPlayback);
+
+    // Create a button for switching songs that also displays the current audio file name
+    let audioFileNameDiv = createDiv(`${audioFileName}`);
+    audioFileNameDiv.class('audio-file-name');
+}
+
 // Function to capture the audio file name
 function captureAudioFileName() {
     audioFileName = getFileName(audio.url);
@@ -313,10 +331,14 @@ function getFileName(url) {
     return fullName.replace(/\.[^/.]+$/, "");
 }
 
-function strokeShape(shape, color) {
-    shape.strokeCol = color;
-}
-
-function unstrokeShape(shape) {
-    shape.strokeCol = null;
+function keyPressed() {
+    if (key === 'Enter') {
+        save('composition.png');
+    }
+    if (key === ' ' && isDragging === false) {
+        toggleCompositionPlayback();
+    }
+    if (key === ' ' && playingShape) {
+        playShapeAudio(playingShape, 2);
+    }
 }
