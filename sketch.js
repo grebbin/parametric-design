@@ -101,7 +101,7 @@ function setup() {
 }
 
 function draw() {
-    background(backgroundImage);
+    background(backgroundImage, 0, 0, windowWidth, windowHeight);
 
     const level = amp.getLevel(); // Get the current amplitude level of the audio
 
