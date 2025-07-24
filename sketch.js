@@ -210,7 +210,7 @@ function modifyShapeVertices(shape, amplitudeFactor) {
 
     // Base scale adjustment for smooth oscillation
     const baseScale = 1;
-    const scaleStrength = 0.09 * amplitudeFactor;
+    const scaleStrength = 0.02 * amplitudeFactor;
 
     // Dynamic random offset magnitude influenced by amplitude
     const offsetMagnitude = amplitudeFactor * 3;
